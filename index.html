@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Badal.ai</title>
-<meta name="description" content="Badal.ai — Your intelligent AI companion">
+<title>Badal.io</title>
+<meta name="description" content="Badal.io — Your intelligent AI companion">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Badal.ai">
+<meta name="apple-mobile-web-app-title" content="Badal.io">
 <link rel="manifest" id="manifestLink">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -57,10 +57,10 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
 
 .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px;justify-content:center;}
 .auth-logo-mark{
-  width:44px;height:44px;border-radius:12px;
+  width:52px;height:52px;border-radius:14px;
   background:#fff;
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:22px;color:#000;
+  overflow:hidden;flex-shrink:0;
 }
 .auth-logo-name{font-family:var(--font-display);font-size:28px;color:var(--text);}
 .auth-logo-name span{color:var(--text3);}
@@ -155,9 +155,9 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
 .sb-top{padding:18px 14px 12px;border-bottom:1px solid var(--border);}
 .sb-logo{display:flex;align-items:center;gap:10px;padding:2px 4px;margin-bottom:14px;}
 .sb-logo-mark{
-  width:30px;height:30px;border-radius:8px;
+  width:32px;height:32px;border-radius:8px;
   background:#fff;display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:16px;color:#000;flex-shrink:0;
+  overflow:hidden;flex-shrink:0;
 }
 .sb-logo-name{font-family:var(--font-display);font-size:19px;color:var(--text);}
 .sb-logo-name span{color:var(--text3);}
@@ -545,8 +545,16 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
 <div id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">
-      <div class="auth-logo-mark">B</div>
-      <div class="auth-logo-name">Badal<span>.ai</span></div>
+      <div class="auth-logo-mark">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cloud shape -->
+          <path d="M36 34H13C9.13 34 6 30.87 6 27C6 23.48 8.56 20.57 11.93 20.08C11.64 19.11 11.5 18.07 11.5 17C11.5 11.2 16.2 6.5 22 6.5C26.36 6.5 30.1 9.1 31.82 12.86C32.84 12.32 34 12 35.25 12C39.25 12 42.5 15.25 42.5 19.25C42.5 19.54 42.48 19.83 42.44 20.12C44.5 21.3 46 23.49 46 26C46 30.42 42.42 34 38 34H36Z" fill="#4A90D9" opacity="0.15"/>
+          <path d="M35 33H12C8.69 33 6 30.31 6 27C6 24.05 8.06 21.6 10.84 20.9C10.62 20.1 10.5 19.26 10.5 18.38C10.5 13.2 14.7 9 19.88 9C23.3 9 26.28 10.82 27.94 13.52C28.9 13.02 30 12.75 31.17 12.75C34.94 12.75 38 15.81 38 19.58V20.01C40.28 20.9 42 23.07 42 25.62C42 29.69 38.69 33 34.62 33" stroke="#3a7bd5" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.6"/>
+          <!-- Big B -->
+          <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#1a1a1a">B</text>
+        </svg>
+      </div>
+      <div class="auth-logo-name">Badal<span>.io</span></div>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
@@ -625,8 +633,13 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
   <div id="sidebar">
     <div class="sb-top">
       <div class="sb-logo">
-        <div class="sb-logo-mark">B</div>
-        <div class="sb-logo-name">Badal<span>.ai</span></div>
+        <div class="sb-logo-mark">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M35 33H12C8.69 33 6 30.31 6 27C6 24.05 8.06 21.6 10.84 20.9C10.62 20.1 10.5 19.26 10.5 18.38C10.5 13.2 14.7 9 19.88 9C23.3 9 26.28 10.82 27.94 13.52C28.9 13.02 30 12.75 31.17 12.75C34.94 12.75 38 15.81 38 19.58V20.01C40.28 20.9 42 23.07 42 25.62C42 29.69 38.69 33 34.62 33" stroke="#3a7bd5" stroke-width="2" stroke-linecap="round" fill="#4A90D9" fill-opacity="0.15"/>
+            <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#1a1a1a">B</text>
+          </svg>
+        </div>
+        <div class="sb-logo-name">Badal<span>.io</span></div>
       </div>
       <button class="sb-new" onclick="newChat()">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
@@ -689,7 +702,13 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
 
     <div id="chatArea">
       <div id="welcome">
-        <div class="w-icon">B</div>
+        <div class="w-icon">
+          <svg width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M36 34H13C9.13 34 6 30.87 6 27C6 23.48 8.56 20.57 11.93 20.08C11.64 19.11 11.5 18.07 11.5 17C11.5 11.2 16.2 6.5 22 6.5C26.36 6.5 30.1 9.1 31.82 12.86C32.84 12.32 34 12 35.25 12C39.25 12 42.5 15.25 42.5 19.25C42.5 19.54 42.48 19.83 42.44 20.12C44.5 21.3 46 23.49 46 26C46 30.42 42.42 34 38 34H36Z" fill="white" opacity="0.25"/>
+            <path d="M35 33H12C8.69 33 6 30.31 6 27C6 24.05 8.06 21.6 10.84 20.9C10.62 20.1 10.5 19.26 10.5 18.38C10.5 13.2 14.7 9 19.88 9C23.3 9 26.28 10.82 27.94 13.52C28.9 13.02 30 12.75 31.17 12.75C34.94 12.75 38 15.81 38 19.58V20.01C40.28 20.9 42 23.07 42 25.62C42 29.69 38.69 33 34.62 33" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="700" fill="white">B</text>
+          </svg>
+        </div>
         <h1 class="w-h1">Hello, I'm Badal</h1>
         <p class="w-sub">Your intelligent AI companion. Ask me anything — I'm here to help you think, create, and explore.</p>
         <div class="pills">
@@ -708,7 +727,7 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
     <div id="inputArea">
       <div class="ibox">
         <div class="irow">
-          <textarea id="msgIn" placeholder="Message Badal..." rows="1" onkeydown="hKey(event)" oninput="resz()"></textarea>
+          <textarea id="msgIn" placeholder="Message Badal.io..." rows="1" onkeydown="hKey(event)" oninput="resz()"></textarea>
         </div>
         <div class="ifooter">
           <button class="ibtn" title="Attach file" onclick="alert('File upload coming soon!')">
@@ -720,7 +739,7 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
           </button>
         </div>
       </div>
-      <div class="ihint">Badal.ai · Powered by Claude · Verify important information</div>
+      <div class="ihint">Badal.io · Powered by Claude · Verify important information</div>
     </div>
   </div>
 </div>
@@ -856,7 +875,8 @@ function logout(){
 });
 
 // ── GOOGLE AUTH ──
-function getGcid(){ return localStorage.getItem('badal_gcid')||''; }
+const GOOGLE_CLIENT_ID = '270497451868-2dg084930vtlkq2pt8970td6mdo3hv3u.apps.googleusercontent.com';
+function getGcid(){ return localStorage.getItem('badal_gcid')||GOOGLE_CLIENT_ID; }
 function saveGcid(){
   const v=$('gcidInput').value.trim();
   if(!v){$('authErr').textContent='Enter a valid Client ID';return;}
@@ -870,18 +890,30 @@ function saveGcid(){
 }
 
 function triggerGoogle(){
-  const cid=getGcid();
-  if(!cid){
-    $('gcidBox').style.display='block';
-    $('gcidBox').scrollIntoView({behavior:'smooth'});
-    $('authErr').textContent='';
-    return;
-  }
-  // Trigger Google One Tap / popup
-  if(window.google && google.accounts){
-    google.accounts.id.prompt();
+  if(window.google && window.google.accounts){
+    // Use popup flow — more reliable than One Tap
+    const client = google.accounts.oauth2.initCodeClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'email profile',
+      ux_mode: 'popup',
+      callback: ()=>{}
+    });
+    // Use id.prompt() for sign-in
+    google.accounts.id.prompt((notification)=>{
+      if(notification.isNotDisplayed() || notification.isSkippedMoment()){
+        // Fallback: render a button click manually
+        $('authErr').textContent='';
+        const btn = document.createElement('div');
+        btn.id='gFallbackBtn';
+        btn.style.display='none';
+        document.body.appendChild(btn);
+        google.accounts.id.renderButton(btn, {theme:'outline',size:'large'});
+        btn.querySelector('div[role=button]')?.click();
+        setTimeout(()=>btn.remove(),1000);
+      }
+    });
   } else {
-    $('authErr').textContent='Google SDK loading... try again in a moment.';
+    $('authErr').textContent='Google SDK loading... please wait and try again.';
   }
 }
 
@@ -926,12 +958,21 @@ function initGoogleBtn(clientId){
   });
 }
 
-// Init Google on load if CID saved
+// Init Google on load — always use hardcoded Client ID
 window.addEventListener('load', ()=>{
-  const cid=getGcid();
-  if(cid && window.google){
-    setTimeout(()=>initGoogleBtn(cid), 1000);
-  }
+  setTimeout(()=>{
+    if(window.google && window.google.accounts){
+      initGoogleBtn(GOOGLE_CLIENT_ID);
+    } else {
+      // Retry after SDK loads
+      const interval = setInterval(()=>{
+        if(window.google && window.google.accounts){
+          initGoogleBtn(GOOGLE_CLIENT_ID);
+          clearInterval(interval);
+        }
+      }, 300);
+    }
+  }, 500);
 });
 
 // ── INIT ──
@@ -1052,7 +1093,8 @@ function renderBubble(role, content, animate=true){
 
   if(role==='ai'){
     const av=document.createElement('div');
-    av.className='ai-av'; av.textContent='B';
+    av.className='ai-av';
+    av.innerHTML=`<svg width="18" height="18" viewBox="0 0 48 48" fill="none"><path d="M35 33H12C8.69 33 6 30.31 6 27C6 24.05 8.06 21.6 10.84 20.9C10.62 20.1 10.5 19.26 10.5 18.38C10.5 13.2 14.7 9 19.88 9C23.3 9 26.28 10.82 27.94 13.52C28.9 13.02 30 12.75 31.17 12.75C34.94 12.75 38 15.81 38 19.58V20.01C40.28 20.9 42 23.07 42 25.62C42 29.69 38.69 33 34.62 33" stroke="white" stroke-width="2" fill="white" fill-opacity="0.3" stroke-linecap="round"/><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="700" fill="white">B</text></svg>`;
     row.appendChild(av);
 
     const col=document.createElement('div');
@@ -1143,7 +1185,7 @@ function formatMd(text){
 function showTyping(){
   const wrap=document.createElement('div');
   wrap.className='mwrap fadeUp'; wrap.id='typingWrap';
-  wrap.innerHTML=`<div class="mrow ai"><div class="ai-av">B</div><div class="bub-ai"><div class="typing"><span></span><span></span><span></span></div></div></div>`;
+  wrap.innerHTML=`<div class="mrow ai"><div class="ai-av"><svg width="18" height="18" viewBox="0 0 48 48" fill="none"><path d="M35 33H12C8.69 33 6 30.31 6 27C6 24.05 8.06 21.6 10.84 20.9C10.62 20.1 10.5 19.26 10.5 18.38C10.5 13.2 14.7 9 19.88 9C23.3 9 26.28 10.82 27.94 13.52C28.9 13.02 30 12.75 31.17 12.75C34.94 12.75 38 15.81 38 19.58V20.01C40.28 20.9 42 23.07 42 25.62C42 29.69 38.69 33 34.62 33" stroke="white" stroke-width="2" fill="white" fill-opacity="0.3" stroke-linecap="round"/><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="700" fill="white">B</text></svg></div><div class="bub-ai"><div class="typing"><span></span><span></span><span></span></div></div></div>`;
   chatArea.appendChild(wrap); chatArea.scrollTop=chatArea.scrollHeight;
 }
 
@@ -1271,7 +1313,7 @@ function dlBlob(blob,name){
 
 // ── PWA MANIFEST ──
 const manifest={
-  name:'Badal.ai',short_name:'Badal',
+  name:'Badal.io',short_name:'Badal',
   description:'Your intelligent AI companion',
   start_url:'./',display:'standalone',
   background_color:'#000000',theme_color:'#000000',
