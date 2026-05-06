@@ -658,13 +658,16 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
     <div id="histList"></div>
 
     <div class="sb-bottom">
-      <div class="api-box">
+      <div class="api-box" id="apiBox" onclick="toggleApiBox()">
         <div class="api-header">
           <div class="api-dot" id="apiDot"></div>
           <span class="api-lbl" id="apiLbl">Anthropic API Key</span>
+          <span id="apiChevron" style="margin-left:auto;color:var(--text3);font-size:10px;transition:transform 0.2s;">▲</span>
         </div>
-        <input type="password" id="apiIn" placeholder="sk-ant-api03-..." autocomplete="off">
-        <button class="api-save" onclick="saveKey()">Save & Connect</button>
+        <div id="apiFields">
+          <input type="password" id="apiIn" placeholder="sk-ant-api03-..." autocomplete="off" onclick="event.stopPropagation()">
+          <button class="api-save" onclick="event.stopPropagation();saveKey()">Save & Connect</button>
+        </div>
       </div>
       <div class="user-row" id="userRow">
         <div class="u-av" id="uAv">U</div>
@@ -1010,6 +1013,23 @@ function saveKey(){
 function setKeyStatus(ok){
   $('apiDot').className='api-dot'+(ok?' on':'');
   $('apiLbl').textContent=ok?'Connected':'Anthropic API Key';
+  if(ok){
+    // Auto-collapse when connected
+    $('apiFields').style.display='none';
+    $('apiChevron').textContent='▼';
+    $('apiBox').style.cursor='pointer';
+  } else {
+    $('apiFields').style.display='';
+    $('apiChevron').textContent='▲';
+  }
+}
+
+function toggleApiBox(){
+  const fields=$('apiFields');
+  const chevron=$('apiChevron');
+  const isHidden = fields.style.display==='none';
+  fields.style.display = isHidden ? '' : 'none';
+  chevron.textContent = isHidden ? '▲' : '▼';
 }
 
 // ── SIDEBAR ──
