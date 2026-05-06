@@ -730,9 +730,14 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
           <textarea id="msgIn" placeholder="Message Badal.io..." rows="1" onkeydown="hKey(event)" oninput="resz()"></textarea>
         </div>
         <div class="ifooter">
-          <button class="ibtn" title="Attach file" onclick="alert('File upload coming soon!')">
+          <button class="ibtn" title="Attach file" onclick="$('fileIn').click()">
             <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
           </button>
+          <input type="file" id="fileIn" style="display:none" accept=".txt,.md,.csv,.json,.js,.py,.html,.css,.pdf,image/*" onchange="handleFile(this)">
+          <div id="fileChip" style="display:none;align-items:center;gap:5px;background:var(--s3);border:1px solid var(--border2);border-radius:6px;padding:3px 8px;font-size:12px;color:var(--text2);">
+            <span id="fileChipName"></span>
+            <button onclick="clearFile()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;">×</button>
+          </div>
           <div style="margin-left:4px;font-size:11px;color:var(--text3)" id="charCount"></div>
           <button id="sendBtn" onclick="send()" disabled>
             <svg width="15" height="15" fill="none" stroke="black" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
@@ -891,55 +896,32 @@ function saveGcid(){
 
 function triggerGoogle(){
   if(window.google && window.google.accounts){
-    // Use popup flow — more reliable than One Tap
-    const client = google.accounts.oauth2.initCodeClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: 'email profile',
-      ux_mode: 'popup',
-      callback: ()=>{}
-    });
-    // Use id.prompt() for sign-in
-    google.accounts.id.prompt((notification)=>{
-      if(notification.isNotDisplayed() || notification.isSkippedMoment()){
-        // Fallback: render a button click manually
-        $('authErr').textContent='';
-        const btn = document.createElement('div');
-        btn.id='gFallbackBtn';
-        btn.style.display='none';
-        document.body.appendChild(btn);
-        google.accounts.id.renderButton(btn, {theme:'outline',size:'large'});
-        btn.querySelector('div[role=button]')?.click();
-        setTimeout(()=>btn.remove(),1000);
+    google.accounts.id.prompt((n)=>{
+      if(n.isNotDisplayed()||n.isSkippedMoment()){
+        // One Tap blocked — click the hidden rendered button
+        const btn=document.querySelector('#gRendered div[role=button]');
+        if(btn) btn.click();
+        else $('authErr').textContent='Allow popups for Google login, or use username/password.';
       }
     });
   } else {
-    $('authErr').textContent='Google SDK loading... please wait and try again.';
+    $('authErr').textContent='Google SDK loading... try again in 2 seconds.';
   }
 }
 
 function handleGoogleLogin(response){
-  // Decode JWT payload
   try{
     const payload=JSON.parse(atob(response.credential.split('.')[1]));
     const email=payload.email;
     const name=payload.name||email.split('@')[0];
     const googleId='g_'+payload.sub;
-
     const users=getUsers();
-    // Auto-create account if new
     if(!users[googleId]){
-      users[googleId]={
-        pass:'__google__',
-        email:email,
-        displayName:name,
-        googleId:payload.sub,
-        created:Date.now()
-      };
+      users[googleId]={ pass:'__google__', email, displayName:name, googleId:payload.sub, created:Date.now() };
       saveUsers(users);
     }
     currentUser=googleId;
     localStorage.setItem('badal_session',googleId);
-    // Store display name for UI
     localStorage.setItem('badal_displayname_'+googleId, name);
     initApp();
   } catch(e){
@@ -948,14 +930,12 @@ function handleGoogleLogin(response){
 }
 
 function initGoogleBtn(clientId){
-  if(!clientId||!window.google) return;
-  $('g_id_onload').setAttribute('data-client_id', clientId);
-  google.accounts.id.initialize({
-    client_id: clientId,
-    callback: handleGoogleLogin,
-    auto_select: false,
-    cancel_on_tap_outside: true,
-  });
+  if(!clientId||!window.google||!window.google.accounts) return;
+  google.accounts.id.initialize({ client_id:clientId, callback:handleGoogleLogin, auto_select:false });
+  // Render hidden button as fallback
+  let el=document.getElementById('gRendered');
+  if(!el){ el=document.createElement('div'); el.id='gRendered'; el.style.cssText='position:absolute;opacity:0;pointer-events:none;top:0;left:0;'; document.body.appendChild(el); }
+  google.accounts.id.renderButton(el,{ theme:'filled_black', size:'large', width:'320' });
 }
 
 // Init Google on load — always use hardcoded Client ID
@@ -963,6 +943,7 @@ window.addEventListener('load', ()=>{
   setTimeout(()=>{
     if(window.google && window.google.accounts){
       initGoogleBtn(GOOGLE_CLIENT_ID);
+
     } else {
       // Retry after SDK loads
       const interval = setInterval(()=>{
@@ -1004,10 +985,10 @@ function loadSettings(){
   settings={...settings,...s};
   $('modelSel').value=settings.model;
   $('modelLabel').textContent=getModelName(settings.model);
-  ['timestamps','compact','sfx'].forEach(k=>{
-    const el=$(k[0].toUpperCase()+k.slice(1,-1)+(k==='sfx'?'xToggle':'Toggle').replace('Togge','Toggle'));
-    // simplified toggle init
-  });
+  // Fix toggles properly
+  if(settings.timestamps) $('tsToggle')?.classList.add('on');
+  if(settings.compact)    $('cmToggle')?.classList.add('on');
+  if(settings.sfx)        $('sfxToggle')?.classList.add('on');
   applySettings();
 }
 function getModelName(m){
@@ -1015,7 +996,10 @@ function getModelName(m){
   return map[m]||'Claude';
 }
 function applySettings(){
-  document.body.style.setProperty('--msg-gap', settings.compact?'12px':'22px');
+  // Compact mode — tighter message spacing
+  document.querySelectorAll('.mrow').forEach(r=>{
+    r.style.marginBottom = settings.compact ? '10px' : '22px';
+  });
 }
 
 function saveKey(){
@@ -1156,10 +1140,10 @@ function copyBubble(btn){
 
 async function regenMsg(btn){
   if(busy)return;
-  // Remove last AI message
-  if(messages.length>0 && messages[messages.length-1].role==='assistant'){
+  if(messages.length>0 && messages[messages.length-1].role==='ai'){
     messages.pop();
     btn.closest('.mwrap').remove();
+    busy=true;
     await callAPI();
   }
 }
@@ -1191,21 +1175,75 @@ function showTyping(){
 
 // ── SEND ──
 async function send(){
-  const text=msgIn.value.trim();
-  if(!text||busy)return;
-  const key=getUserKey();
+  const text = msgIn.value.trim();
+  if((!text && !attachedFile) || busy) return;
+  const key = getUserKey();
   if(!key){ $('banner').style.display='block'; $('banner').textContent='⚡ Enter your Anthropic API key in the sidebar first!'; return; }
+
   busy=true; sendBtn.disabled=true;
-  messages.push({role:'user',content:text});
-  renderBubble('user',text);
+  const userText = text || '👆 See attached file';
+  const fileCopy = attachedFile ? {...attachedFile} : null;
+  messages.push({role:'user', content:userText, file: fileCopy});
+
+  // Render user bubble (show image preview if image)
+  renderUserBubble(userText, fileCopy);
+
   msgIn.value=''; msgIn.style.height='auto'; $('charCount').textContent='';
+  clearFile();
   await callAPI();
+}
+
+function renderUserBubble(text, file){
+  const w=$('welcome');
+  if(w&&w.parentNode===chatArea) w.style.display='none';
+  const wrap=document.createElement('div');
+  wrap.className='mwrap fadeUp';
+  const row=document.createElement('div');
+  row.className='mrow user';
+  const bub=document.createElement('div');
+  bub.className='bub-user';
+  if(file && file.type==='image'){
+    const img=document.createElement('img');
+    img.src=file.data;
+    img.style.cssText='max-width:220px;max-height:180px;border-radius:8px;display:block;margin-bottom:6px;';
+    bub.appendChild(img);
+  }
+  if(file && file.type==='text'){
+    const chip=document.createElement('div');
+    chip.style.cssText='font-size:11px;color:var(--text3);margin-bottom:4px;';
+    chip.textContent='📄 '+file.name;
+    bub.appendChild(chip);
+  }
+  if(text && text!=='👆 See attached file'){
+    const t=document.createElement('div');
+    t.textContent=text;
+    bub.appendChild(t);
+  }
+  row.appendChild(bub);
+  wrap.appendChild(row);
+  chatArea.appendChild(wrap);
+  chatArea.scrollTop=chatArea.scrollHeight;
 }
 
 async function callAPI(){
   showTyping();
   const key=getUserKey();
   try{
+    // Build API messages — handle file attachments properly
+    const apiMsgs = messages.map(m=>{
+      const role = m.role==='ai'?'assistant':'user';
+      if(m.file && m.file.type==='image'){
+        return { role, content:[
+          { type:'image', source:{ type:'base64', media_type:m.file.mimeType, data:m.file.data.split(',')[1] }},
+          { type:'text', text: m.content==='👆 See attached file' ? 'What is in this image? Describe it in detail.' : m.content }
+        ]};
+      }
+      if(m.file && m.file.type==='text'){
+        return { role, content:`I'm sharing a file named "${m.file.name}":\n\`\`\`\n${m.file.content.slice(0,8000)}\n\`\`\`\n\n${m.content}` };
+      }
+      return { role, content: m.content };
+    });
+
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{
@@ -1217,15 +1255,15 @@ async function callAPI(){
       body:JSON.stringify({
         model:settings.model,
         max_tokens:2000,
-        system:`You are Badal, a brilliant and friendly AI assistant. Be helpful, concise, and thoughtful. Use markdown formatting when appropriate. Today's date: ${new Date().toDateString()}.`,
-        messages:messages.map(m=>({role:m.role==='ai'?'assistant':'user',content:m.content}))
+        system:`You are Badal, a brilliant and friendly AI assistant built by Badal.io. Be helpful, concise, and thoughtful. Use markdown when appropriate. Today: ${new Date().toDateString()}.`,
+        messages: apiMsgs
       })
     });
     const data=await res.json();
     $('typingWrap')?.remove();
 
     if(data.error){
-      const errMsg=`Error: ${data.error.message}`;
+      const errMsg=`⚠️ ${data.error.message}`;
       messages.push({role:'ai',content:errMsg});
       renderBubble('ai',errMsg);
     } else {
@@ -1235,7 +1273,9 @@ async function callAPI(){
       if(settings.sfx) playBeep();
       if(!currentId){
         currentId=Date.now();
-        chats.push({id:currentId,title:messages[0].content.slice(0,45)+(messages[0].content.length>45?'…':''),messages:[...messages],created:Date.now()});
+        const firstUser=messages.find(m=>m.role==='user');
+        const title=(firstUser?.content||'New Chat').replace('👆 See attached file','File: '+(firstUser?.file?.name||'')).slice(0,45);
+        chats.push({id:currentId, title, messages:[...messages], created:Date.now()});
       } else {
         const c=chats.find(x=>x.id===currentId);
         if(c) c.messages=[...messages];
@@ -1245,11 +1285,12 @@ async function callAPI(){
     }
   } catch(e){
     $('typingWrap')?.remove();
-    const errMsg='Connection error. Check your API key and internet.';
+    const errMsg='⚠️ Connection error. Check your API key and internet connection.';
     messages.push({role:'ai',content:errMsg});
     renderBubble('ai',errMsg);
   }
-  busy=false; sendBtn.disabled=!msgIn.value.trim();
+  busy=false;
+  sendBtn.disabled = !msgIn.value.trim() && !attachedFile;
   chatArea.scrollTop=chatArea.scrollHeight;
 }
 
@@ -1311,15 +1352,80 @@ function dlBlob(blob,name){
   URL.revokeObjectURL(a.href);
 }
 
-// ── PWA MANIFEST ──
+// ── FILE UPLOAD ──
+let attachedFile = null;
+
+function handleFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  const maxMB = 5;
+  if(file.size > maxMB*1024*1024){ showToast('File too large (max 5MB)'); return; }
+
+  const reader = new FileReader();
+  if(file.type.startsWith('image/')){
+    reader.onload = e => {
+      attachedFile = { type:'image', name:file.name, data:e.target.result, mimeType:file.type };
+      showFileChip('🖼 ' + file.name);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    reader.onload = e => {
+      attachedFile = { type:'text', name:file.name, content:e.target.result };
+      showFileChip('📄 ' + file.name);
+    };
+    reader.readAsText(file);
+  }
+  input.value='';
+}
+
+function showFileChip(name){
+  $('fileChipName').textContent = name;
+  $('fileChip').style.display = 'flex';
+  sendBtn.disabled = false;
+}
+
+function clearFile(){
+  attachedFile = null;
+  $('fileChip').style.display = 'none';
+  $('fileIn').value = '';
+  sendBtn.disabled = !msgIn.value.trim();
+}
+
+// ── TOAST ──
+function showToast(msg, duration=3000){
+  let t = document.getElementById('toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--border2);color:var(--text);padding:8px 18px;border-radius:20px;font-size:13px;z-index:9999;pointer-events:none;transition:opacity 0.3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>{ t.style.opacity='0'; }, duration);
+}
+
+// ── EXPORT (fix alert) ──
+function showExport(){
+  if(!messages.length){ showToast('No messages to export'); return; }
+  $('exportPanel').classList.add('show');
+}
+
+// ── TIMESTAMP HELPER ──
+function getTimeStr(){
+  return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── PWA MANIFEST (with cloud icon) ──
 const manifest={
   name:'Badal.io',short_name:'Badal',
   description:'Your intelligent AI companion',
   start_url:'./',display:'standalone',
   background_color:'#000000',theme_color:'#000000',
   icons:[
-    {src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%23fff"/><text y=".9em" font-size="80" x="10" font-family="Georgia">B</text></svg>',sizes:'192x192',type:'image/svg+xml'},
-    {src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%23fff"/><text y=".9em" font-size="80" x="10" font-family="Georgia">B</text></svg>',sizes:'512x512',type:'image/svg+xml'}
+    {src:`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%23fff"/><path d="M72 68H30C22 68 16 62 16 54c0-6.5 4.2-12 10-13.8C25.5 39 25 38 25 37c0-11 9-20 20-20 7 0 13.2 3.6 16.8 9C63 25 65 24.5 67 24.5c7.5 0 13.5 6 13.5 13.5 0 .5 0 1-.05 1.5C84 41.5 87 46.5 87 52c0 8.8-7.2 16-16 16z" fill="%234A90D9" opacity="0.3"/><path d="M70 66H28C21 66 15 60 15 53c0-6 3.8-11 9.2-13C23.8 39 23.5 38 23.5 37c0-10 8.1-18 18.1-18 6.3 0 11.8 3.2 15 8C58 26.5 60 26 62 26c7 0 12.5 5.5 12.5 12.5v.4C77 40.5 80 45 80 50c0 8.8-7.2 16-16 16" stroke="%233a7bd5" stroke-width="3" stroke-linecap="round" fill="none"/><text x="50" y="58" dominant-baseline="middle" text-anchor="middle" font-family="Georgia,serif" font-size="36" font-weight="700" fill="%231a1a1a">B</text></svg>')}`,sizes:'192x192',type:'image/svg+xml'},
+    {src:`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%23fff"/><path d="M72 68H30C22 68 16 62 16 54c0-6.5 4.2-12 10-13.8C25.5 39 25 38 25 37c0-11 9-20 20-20 7 0 13.2 3.6 16.8 9C63 25 65 24.5 67 24.5c7.5 0 13.5 6 13.5 13.5 0 .5 0 1-.05 1.5C84 41.5 87 46.5 87 52c0 8.8-7.2 16-16 16z" fill="%234A90D9" opacity="0.3"/><path d="M70 66H28C21 66 15 60 15 53c0-6 3.8-11 9.2-13C23.8 39 23.5 38 23.5 37c0-10 8.1-18 18.1-18 6.3 0 11.8 3.2 15 8C58 26.5 60 26 62 26c7 0 12.5 5.5 12.5 12.5v.4C77 40.5 80 45 80 50c0 8.8-7.2 16-16 16" stroke="%233a7bd5" stroke-width="3" stroke-linecap="round" fill="none"/><text x="50" y="58" dominant-baseline="middle" text-anchor="middle" font-family="Georgia,serif" font-size="36" font-weight="700" fill="%231a1a1a">B</text></svg>')}`,sizes:'512x512',type:'image/svg+xml'}
   ]
 };
 const mBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
