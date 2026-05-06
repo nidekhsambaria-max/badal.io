@@ -664,7 +664,7 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
           <span class="api-lbl" id="apiLbl">Anthropic API Key</span>
           <span id="apiChevron" style="margin-left:auto;color:var(--text3);font-size:10px;transition:transform 0.2s;">▲</span>
         </div>
-        <div id="apiFields">
+        <div id="apiFields" style="display:none;">
           <input type="password" id="apiIn" placeholder="sk-ant-api03-..." autocomplete="off" onclick="event.stopPropagation()">
           <button class="api-save" onclick="event.stopPropagation();saveKey()">Save & Connect</button>
         </div>
@@ -970,7 +970,7 @@ function initApp(){
   $('uAv').textContent = displayName[0].toUpperCase();
   const k=getUserKey();
   if(k){ $('apiIn').value=k; setKeyStatus(true); }
-  else{ $('banner').style.display='block'; }
+  else{ $('banner').style.display='block'; $('apiFields').style.display=''; $('apiChevron').textContent='▲'; }
   loadSettings();
   renderHist();
 }
