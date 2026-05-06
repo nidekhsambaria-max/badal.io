@@ -665,36 +665,36 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
     <div id="histList"></div>
 
     <div class="sb-bottom">
-      <!-- Provider Toggle -->
-      <div style="display:flex;gap:4px;margin-bottom:8px;background:var(--s2);border-radius:8px;padding:3px;">
-        <button class="prov-btn active" id="provAnthopic" onclick="switchProvider('anthropic')">Claude</button>
-        <button class="prov-btn" id="provGroq" onclick="switchProvider('groq')">Groq 🆓</button>
-      </div>
-
-      <!-- Anthropic box -->
-      <div class="api-box" id="apiBox" onclick="toggleApiBox()">
-        <div class="api-header">
-          <div class="api-dot" id="apiDot"></div>
-          <span class="api-lbl" id="apiLbl">Anthropic API Key</span>
-          <span id="apiChevron" style="margin-left:auto;color:var(--text3);font-size:10px;">▲</span>
+      <!-- Provider toggle + API boxes hidden — accessible via Settings only -->
+      <div id="providerSection" style="display:none;">
+        <div style="display:flex;gap:4px;margin-bottom:8px;background:var(--s2);border-radius:8px;padding:3px;">
+          <button class="prov-btn active" id="provAnthopic" onclick="switchProvider('anthropic')">Claude</button>
+          <button class="prov-btn" id="provGroq" onclick="switchProvider('groq')">Groq 🆓</button>
         </div>
-        <div id="apiFields" style="display:none;">
-          <input type="password" id="apiIn" placeholder="sk-ant-api03-..." autocomplete="off" onclick="event.stopPropagation()">
-          <button class="api-save" onclick="event.stopPropagation();saveKey()">Save & Connect</button>
+        <!-- Anthropic box -->
+        <div class="api-box" id="apiBox" onclick="toggleApiBox()">
+          <div class="api-header">
+            <div class="api-dot" id="apiDot"></div>
+            <span class="api-lbl" id="apiLbl">Anthropic API Key</span>
+            <span id="apiChevron" style="margin-left:auto;color:var(--text3);font-size:10px;">▲</span>
+          </div>
+          <div id="apiFields" style="display:none;">
+            <input type="password" id="apiIn" placeholder="sk-ant-api03-..." autocomplete="off" onclick="event.stopPropagation()">
+            <button class="api-save" onclick="event.stopPropagation();saveKey()">Save & Connect</button>
+          </div>
         </div>
-      </div>
-
-      <!-- Groq box -->
-      <div class="api-box" id="groqBox" style="display:none;" onclick="toggleGroqBox()">
-        <div class="api-header">
-          <div class="api-dot" id="groqDot"></div>
-          <span class="api-lbl" id="groqLbl">Groq API Key (Free)</span>
-          <span id="groqChevron" style="margin-left:auto;color:var(--text3);font-size:10px;">▲</span>
-        </div>
-        <div id="groqFields" style="display:none;">
-          <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Get free key at <a href="https://console.groq.com" target="_blank" style="color:#4ade80;text-decoration:none;">console.groq.com</a></div>
-          <input type="password" id="groqIn" placeholder="gsk_..." autocomplete="off" onclick="event.stopPropagation()">
-          <button class="api-save" style="background:#1a3a1a;color:#4ade80;border:1px solid #4ade80;" onclick="event.stopPropagation();saveGroqKey()">Save & Connect Free</button>
+        <!-- Groq box -->
+        <div class="api-box" id="groqBox" style="display:none;" onclick="toggleGroqBox()">
+          <div class="api-header">
+            <div class="api-dot" id="groqDot"></div>
+            <span class="api-lbl" id="groqLbl">Groq API Key (Free)</span>
+            <span id="groqChevron" style="margin-left:auto;color:var(--text3);font-size:10px;">▲</span>
+          </div>
+          <div id="groqFields" style="display:none;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Get free key at <a href="https://console.groq.com" target="_blank" style="color:#4ade80;text-decoration:none;">console.groq.com</a></div>
+            <input type="password" id="groqIn" placeholder="gsk_..." autocomplete="off" onclick="event.stopPropagation()">
+            <button class="api-save" style="background:#1a3a1a;color:#4ade80;border:1px solid #4ade80;" onclick="event.stopPropagation();saveGroqKey()">Save & Connect Free</button>
+          </div>
         </div>
       </div>
       <div class="user-row" id="userRow">
@@ -786,6 +786,32 @@ body{color:var(--text);font-family:var(--font-body);font-weight:300;}
     <div class="settings-title">
       Settings
       <button class="close-btn" onclick="closeSettings()">✕</button>
+    </div>
+
+    <div class="settings-section">API Provider</div>
+    <div class="setting-row">
+      <div class="setting-info">
+        <label>Provider</label>
+        <small>Switch between Claude & free Groq</small>
+      </div>
+      <div style="display:flex;gap:4px;background:var(--s2);border-radius:8px;padding:3px;">
+        <button class="prov-btn active" id="provAnthopiS" onclick="switchProvider('anthropic')">Claude</button>
+        <button class="prov-btn" id="provGroqS" onclick="switchProvider('groq')">Groq 🆓</button>
+      </div>
+    </div>
+    <div id="anthropicSettingBox">
+      <div class="auth-field" style="margin-top:8px;">
+        <label class="auth-label" style="font-size:11px;color:var(--text3);">Anthropic API Key</label>
+        <input class="auth-input" type="password" id="apiInS" placeholder="sk-ant-api03-..." style="font-size:12px;padding:8px 10px;">
+      </div>
+      <button class="api-save" onclick="saveKeyFromSettings()" style="margin-top:6px;">Save & Connect</button>
+    </div>
+    <div id="groqSettingBox" style="display:none;">
+      <div class="auth-field" style="margin-top:8px;">
+        <label class="auth-label" style="font-size:11px;color:var(--text3);">Groq API Key — <a href="https://console.groq.com" target="_blank" style="color:#4ade80;">Get free key</a></label>
+        <input class="auth-input" type="password" id="groqInS" placeholder="gsk_..." style="font-size:12px;padding:8px 10px;">
+      </div>
+      <button class="api-save" onclick="saveGroqKeyFromSettings()" style="margin-top:6px;background:#1a3a1a;color:#4ade80;border:1px solid #4ade80;">Save & Connect Free</button>
     </div>
 
     <div class="settings-section">Model</div>
@@ -1007,6 +1033,15 @@ function initApp(){
   const k=getUserKey();
   if(k){ $('apiIn').value=k; setKeyStatus(true); }
   else{ $('banner').style.display='block'; $('apiFields').style.display=''; $('apiChevron').textContent='▲'; }
+
+  // Restore provider
+  const savedProvider = localStorage.getItem('badal_provider_'+currentUser)||'anthropic';
+  currentProvider = savedProvider;
+  if(savedProvider==='groq'){
+    switchProvider('groq');
+    const gk=getUserGroqKey();
+    if(gk){ $('groqIn').value=gk; setGroqStatus(true); $('banner').style.display='none'; }
+  }
   loadSettings();
   renderHist();
 }
@@ -1039,6 +1074,26 @@ function applySettings(){
   document.querySelectorAll('.mrow').forEach(r=>{
     r.style.marginBottom = settings.compact ? '10px' : '22px';
   });
+}
+
+function saveKeyFromSettings(){
+  const k=$('apiInS').value.trim();
+  if(!k){ showToast('Enter a valid API key'); return; }
+  setUserKey(k); $('apiIn').value=k; setKeyStatus(true);
+  $('banner').style.display='none';
+  showToast('✅ Claude connected!');
+}
+
+function saveGroqKeyFromSettings(){
+  const k=$('groqInS').value.trim();
+  if(!k){ showToast('Enter a valid Groq key'); return; }
+  setUserGroqKey(k); $('groqIn').value=k; setGroqStatus(true);
+  $('banner').style.display='none';
+  settings.model='groq:llama-3.3-70b-versatile';
+  $('modelSel').value=settings.model;
+  $('modelLabel').textContent='Llama 3.3 70B 🆓';
+  saveUserSettings();
+  showToast('✅ Groq connected — Free!');
 }
 
 function saveKey(){
@@ -1088,11 +1143,18 @@ let currentProvider='anthropic';
 
 function switchProvider(p){
   currentProvider=p;
-  // Toggle UI
-  $('provAnthopic').classList.toggle('active',p==='anthropic');
-  $('provGroq').classList.toggle('active',p==='groq');
+  // Sidebar toggles
+  $('provAnthopic')?.classList.toggle('active',p==='anthropic');
+  $('provGroq')?.classList.toggle('active',p==='groq');
+  // Settings panel toggles
+  $('provAnthopiS')?.classList.toggle('active',p==='anthropic');
+  $('provGroqS')?.classList.toggle('active',p==='groq');
+  // Show/hide sidebar boxes (hidden section)
   $('apiBox').style.display=p==='anthropic'?'':'none';
   $('groqBox').style.display=p==='groq'?'':'none';
+  // Show/hide settings boxes
+  $('anthropicSettingBox').style.display=p==='anthropic'?'':'none';
+  $('groqSettingBox').style.display=p==='groq'?'':'none';
   // Toggle model options
   document.getElementById('claudeModels').style.display=p==='anthropic'?'':'none';
   document.getElementById('groqModels').style.display=p==='groq'?'':'none';
@@ -1100,12 +1162,14 @@ function switchProvider(p){
 
   if(p==='groq'){
     const gk=getUserGroqKey();
-    if(gk){ $('groqIn').value=gk; setGroqStatus(true); }
+    if(gk){ $('groqIn').value=gk; $('groqInS').value=gk; setGroqStatus(true); }
     else{ $('groqFields').style.display=''; $('groqChevron').textContent='▲'; }
     settings.model='groq:llama-3.3-70b-versatile';
     $('modelSel').value=settings.model;
     $('modelLabel').textContent='Llama 3.3 70B 🆓';
   } else {
+    const k=getUserKey();
+    if(k) $('apiInS').value=k;
     settings.model='claude-sonnet-4-20250514';
     $('modelSel').value=settings.model;
     $('modelLabel').textContent='Claude Sonnet 4';
@@ -1300,8 +1364,13 @@ function showTyping(){
 async function send(){
   const text = msgIn.value.trim();
   if((!text && !attachedFile) || busy) return;
-  const key = getUserKey();
-  if(!key){ $('banner').style.display='block'; $('banner').textContent='⚡ Enter your Anthropic API key in the sidebar first!'; return; }
+  const isGroq = currentProvider==='groq' || settings.model.startsWith('groq:');
+  const key = isGroq ? getUserGroqKey() : getUserKey();
+  if(!key){
+    $('banner').style.display='block';
+    $('banner').textContent = isGroq ? '⚡ Enter your free Groq API key in the sidebar!' : '⚡ Enter your Anthropic API key in the sidebar!';
+    return;
+  }
 
   busy=true; sendBtn.disabled=true;
   const userText = text || '👆 See attached file';
@@ -1449,7 +1518,17 @@ function playBeep(){
 }
 
 // ── SETTINGS ──
-function showSettings(){ $('settingsPanel').classList.add('show'); }
+function showSettings(){
+  // Populate API key inputs
+  const k=getUserKey(); if(k) $('apiInS').value=k;
+  const gk=getUserGroqKey(); if(gk) $('groqInS').value=gk;
+  // Sync provider buttons
+  $('provAnthopiS')?.classList.toggle('active',currentProvider==='anthropic');
+  $('provGroqS')?.classList.toggle('active',currentProvider==='groq');
+  $('anthropicSettingBox').style.display=currentProvider==='anthropic'?'':'none';
+  $('groqSettingBox').style.display=currentProvider==='groq'?'':'none';
+  $('settingsPanel').classList.add('show');
+}
 function closeSettings(){ $('settingsPanel').classList.remove('show'); }
 function changeModel(v){
   settings.model=v;
